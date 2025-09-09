@@ -52,6 +52,12 @@ export interface Subject {
     id: string;
     title: string;
     completed: boolean;
+    content?: string;
+    quiz?: {
+      question: string;
+      options: string[];
+      correct: number;
+    }[];
   }[];
   progress: number;
 }

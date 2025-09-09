@@ -27,7 +27,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary-glow to-primary bg-[length:400%_400%] animate-pulse">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary-glow to-primary">
         <div className="absolute inset-0 bg-black/10" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="text-center space-y-8">
