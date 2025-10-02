@@ -14,15 +14,77 @@ import {
   Calendar,
   Award,
   Target,
-  Zap
+  Zap,
+  Building2
 } from "lucide-react";
-import { mockContests, mockUsers, mockSubjects } from "@/data/mockData";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 
 const Home = () => {
-  const upcomingContests = mockContests.filter(c => c.status === 'upcoming').slice(0, 2);
-  const topUsers = mockUsers.slice(0, 3);
-  const featuredSubjects = mockSubjects.slice(0, 3);
+  // Fetch contests
+  const { data: contests } = useQuery({
+    queryKey: ['contests'],
+    queryFn: async () => {
+      // @ts-ignore - Database types not yet generated
+      const { data, error } = await supabase
+        .from('contests')
+        .select('*')
+        .eq('status', 'upcoming')
+        .order('start_time', { ascending: true })
+        .limit(2);
+      if (error) throw error;
+      return data as any[];
+    }
+  });
+
+  // Fetch top performers
+  const { data: topPerformers } = useQuery({
+    queryKey: ['top-performers'],
+    queryFn: async () => {
+      // @ts-ignore - Database types not yet generated
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('rating', { ascending: false })
+        .limit(3);
+      if (error) throw error;
+      return data as any[];
+    }
+  });
+
+  // Fetch subjects
+  const { data: subjects } = useQuery({
+    queryKey: ['subjects'],
+    queryFn: async () => {
+      // @ts-ignore - Database types not yet generated
+      const { data, error } = await supabase
+        .from('subjects')
+        .select('*')
+        .limit(3);
+      if (error) throw error;
+      return data as any[];
+    }
+  });
+
+  // Fetch companies
+  const { data: companies } = useQuery({
+    queryKey: ['companies'],
+    queryFn: async () => {
+      // @ts-ignore - Database types not yet generated
+      const { data, error } = await supabase
+        .from('companies')
+        .select('*')
+        .order('placement_count', { ascending: false })
+        .limit(8);
+      if (error) throw error;
+      return data as any[];
+    }
+  });
+
+  const upcomingContests = contests || [];
+  const topUsers = topPerformers || [];
+  const featuredSubjects = subjects || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -33,7 +95,7 @@ const Home = () => {
           <div className="text-center space-y-8">
             <div className="space-y-4">
               <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-primary-foreground tracking-tight">
-                Master <span className="text-primary-glow">Coding</span>
+                Master <span className="text-white">Coding</span>
                 <br />
                 Competitions
               </h1>
@@ -77,6 +139,41 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Companies Section */}
+      {companies && companies.length > 0 && (
+        <section className="bg-gradient-to-br from-secondary/50 via-background to-secondary/30 py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold tracking-tight mb-3">Our Students are placed at:</h2>
+              <p className="text-muted-foreground">Top companies trust our platform to train future developers</p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8 items-center">
+              {companies.map((company: any) => (
+                <div 
+                  key={company.id}
+                  className="group flex items-center justify-center p-6 bg-card rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-105 border border-border/50"
+                >
+                  {company.logo_url ? (
+                    <img 
+                      src={company.logo_url} 
+                      alt={company.name}
+                      className="h-12 w-auto object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+                    />
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Building2 className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
+                      <span className="font-semibold text-lg text-muted-foreground group-hover:text-foreground transition-colors">
+                        {company.name}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
         {/* Upcoming Contests */}
         <section>
@@ -91,7 +188,7 @@ const Home = () => {
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {upcomingContests.map((contest) => (
+            {upcomingContests.map((contest: any) => (
               <Card key={contest.id} className="group hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary">
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -116,15 +213,15 @@ const Home = () => {
                     </div>
                     <div className="flex items-center text-muted-foreground">
                       <Users className="mr-2 h-4 w-4" />
-                      {contest.participants} registered
+                      {contest.participants_count} registered
                     </div>
                     <div className="flex items-center text-muted-foreground">
                       <Calendar className="mr-2 h-4 w-4" />
-                      {formatDistanceToNow(new Date(contest.startTime), { addSuffix: true })}
+                      {formatDistanceToNow(new Date(contest.start_time), { addSuffix: true })}
                     </div>
                     <div className="flex items-center text-muted-foreground">
                       <Code className="mr-2 h-4 w-4" />
-                      {contest.problems.length} problems
+                      {contest.duration}
                     </div>
                   </div>
                   <Button className="w-full" variant="outline" asChild>
@@ -151,16 +248,16 @@ const Home = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {topUsers.map((user, index) => (
+            {topUsers.map((user: any, index: number) => (
               <Card key={user.id} className={`text-center hover:shadow-lg transition-all duration-300 ${
                 index === 0 ? 'ring-2 ring-warning shadow-lg' : ''
               }`}>
                 <CardHeader className="pb-4">
                   <div className="relative mx-auto">
                     <Avatar className="h-16 w-16 mx-auto border-4 border-background shadow-lg">
-                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarImage src={user.avatar_url} alt={user.name} />
                       <AvatarFallback className="text-lg font-bold">
-                        {user.name.split(' ').map(n => n[0]).join('')}
+                        {user.name?.split(' ').map((n: string) => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
                     {index === 0 && (
@@ -171,7 +268,7 @@ const Home = () => {
                   </div>
                   <div className="space-y-1">
                     <CardTitle className="text-lg">{user.name}</CardTitle>
-                    <CardDescription>{user.year} Year • {user.branch}</CardDescription>
+                    <CardDescription>{user.year} • {user.branch}</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -185,17 +282,21 @@ const Home = () => {
                       <div className="text-muted-foreground">Solved</div>
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-1 justify-center">
-                    {user.badges.slice(0, 2).map((badge) => (
-                      <Badge key={badge} variant="secondary" className="text-xs">
-                        {badge}
-                      </Badge>
-                    ))}
-                  </div>
-                  <div className="flex items-center justify-center text-sm text-muted-foreground">
-                    <Zap className="mr-1 h-4 w-4 text-warning" />
-                    {user.streak} day streak
-                  </div>
+                  {user.badges && user.badges.length > 0 && (
+                    <div className="flex flex-wrap gap-1 justify-center">
+                      {user.badges.slice(0, 2).map((badge: string) => (
+                        <Badge key={badge} variant="secondary" className="text-xs">
+                          {badge}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                  {user.streak > 0 && (
+                    <div className="flex items-center justify-center text-sm text-muted-foreground">
+                      <Zap className="mr-1 h-4 w-4 text-warning" />
+                      {user.streak} day streak
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
@@ -215,7 +316,7 @@ const Home = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredSubjects.map((subject) => (
+            {featuredSubjects.map((subject: any) => (
               <Card key={subject.id} className="group hover:shadow-lg transition-all duration-300 hover:scale-105">
                 <CardHeader>
                   <div className="flex items-center space-x-3">
@@ -239,7 +340,7 @@ const Home = () => {
                     <Progress value={subject.progress} className="h-2" />
                   </div>
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>{subject.topics.filter(t => t.completed).length} of {subject.topics.length} topics</span>
+                    <span>{subject.total_topics} topics</span>
                     <div className="flex items-center">
                       <TrendingUp className="mr-1 h-4 w-4" />
                       <span>Popular</span>
