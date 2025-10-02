@@ -14,7 +14,452 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      companies: {
+        Row: {
+          avg_package: number | null
+          created_at: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          placement_count: number
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          avg_package?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          placement_count?: number
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          avg_package?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          placement_count?: number
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      contest_problems: {
+        Row: {
+          contest_id: string
+          created_at: string
+          id: string
+          order_number: number
+          points: number
+          problem_id: string
+        }
+        Insert: {
+          contest_id: string
+          created_at?: string
+          id?: string
+          order_number: number
+          points?: number
+          problem_id: string
+        }
+        Update: {
+          contest_id?: string
+          created_at?: string
+          id?: string
+          order_number?: number
+          points?: number
+          problem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contest_problems_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contest_problems_problem_id_fkey"
+            columns: ["problem_id"]
+            isOneToOne: false
+            referencedRelation: "problems"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contests: {
+        Row: {
+          created_at: string
+          description: string
+          duration: string
+          end_time: string
+          id: string
+          max_participants: number | null
+          participants_count: number
+          start_time: string
+          status: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          duration: string
+          end_time: string
+          id?: string
+          max_participants?: number | null
+          participants_count?: number
+          start_time: string
+          status?: string
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          duration?: string
+          end_time?: string
+          id?: string
+          max_participants?: number | null
+          participants_count?: number
+          start_time?: string
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      problems: {
+        Row: {
+          constraints: string[] | null
+          created_at: string
+          difficulty: string
+          editorial: string | null
+          examples: Json
+          id: string
+          memory_limit: string
+          slug: string
+          solved_count: number
+          statement: string
+          tags: string[] | null
+          time_limit: string
+          title: string
+          total_attempts: number
+          updated_at: string
+        }
+        Insert: {
+          constraints?: string[] | null
+          created_at?: string
+          difficulty: string
+          editorial?: string | null
+          examples?: Json
+          id?: string
+          memory_limit?: string
+          slug: string
+          solved_count?: number
+          statement: string
+          tags?: string[] | null
+          time_limit?: string
+          title: string
+          total_attempts?: number
+          updated_at?: string
+        }
+        Update: {
+          constraints?: string[] | null
+          created_at?: string
+          difficulty?: string
+          editorial?: string | null
+          examples?: Json
+          id?: string
+          memory_limit?: string
+          slug?: string
+          solved_count?: number
+          statement?: string
+          tags?: string[] | null
+          time_limit?: string
+          title?: string
+          total_attempts?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          badges: string[] | null
+          bio: string | null
+          branch: string
+          created_at: string
+          email: string
+          id: string
+          name: string
+          rating: number
+          solved: number
+          streak: number
+          updated_at: string
+          user_id: string
+          year: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          badges?: string[] | null
+          bio?: string | null
+          branch?: string
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          rating?: number
+          solved?: number
+          streak?: number
+          updated_at?: string
+          user_id: string
+          year?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          badges?: string[] | null
+          bio?: string | null
+          branch?: string
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          rating?: number
+          solved?: number
+          streak?: number
+          updated_at?: string
+          user_id?: string
+          year?: string
+        }
+        Relationships: []
+      }
+      subjects: {
+        Row: {
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          progress: number
+          slug: string
+          title: string
+          total_topics: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          icon?: string
+          id?: string
+          progress?: number
+          slug: string
+          title: string
+          total_topics?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          progress?: number
+          slug?: string
+          title?: string
+          total_topics?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      submissions: {
+        Row: {
+          code: string
+          contest_id: string | null
+          created_at: string
+          execution_time: number | null
+          id: string
+          language: string
+          memory_used: number | null
+          problem_id: string
+          score: number | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          contest_id?: string | null
+          created_at?: string
+          execution_time?: number | null
+          id?: string
+          language: string
+          memory_used?: number | null
+          problem_id: string
+          score?: number | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          contest_id?: string | null
+          created_at?: string
+          execution_time?: number | null
+          id?: string
+          language?: string
+          memory_used?: number | null
+          problem_id?: string
+          score?: number | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submissions_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "submissions_problem_id_fkey"
+            columns: ["problem_id"]
+            isOneToOne: false
+            referencedRelation: "problems"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "submissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      topics: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          order_number: number
+          subject_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          order_number: number
+          subject_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          order_number?: number
+          subject_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topics_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_achievements: {
+        Row: {
+          created_at: string
+          description: string | null
+          earned_at: string
+          icon: string | null
+          id: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          earned_at?: string
+          icon?: string | null
+          id?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          earned_at?: string
+          icon?: string | null
+          id?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      user_topic_progress: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          topic_id: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          topic_id: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          topic_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_topic_progress_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_topic_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
